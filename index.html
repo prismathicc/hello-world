@@ -1,18 +1,69 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>my-first-website</title>
-  <LINK href="styles.css" rel="stylesheet" type="text/css">
+	<meta charset="UTF-8">
+	<title>wtf is happening</title>
+	<style type="text/css">
+		@import url('https://fonts.googleapis.com/css?family=Faster+One|Fugaz+One|Gravitas+One|Libre+Barcode+39|Monoton|Nosifer|Poller+One&display=swap');
+		body{
+			width: 100vw;
+			height: 100vh;
+			margin: 0;
+			padding: 0;
+			user-select: none;
+		}
+		#back{
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+			background: rgb(255,205,0);
+            background: linear-gradient(45deg, rgba(255,205,0,1) 0%, rgba(0,132,255,1) 100%);
+			filter: hue-rotate(0deg);
+			width: 50%;
+			height: 50%;
+		}
+		#text{
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-content: center;
+			align-items: center;
+			justify-content: center;
+			color: white;
+		}
+		.letter{
+			font-size: 10vw;
+			transform: rotate(0deg);
+			font-family: 'Fugaz One';
+			padding: 10px;
+		}
+		#log{
+			position: absolute;
+			bottom: 1%;
+			left: 1%;
+		}
+	</style>
 </head>
-
-<body>
-
-<img src="https://octodex.github.com/images/daftpunktocat-thomas.gif" id="octocat" alt="octocat-gif" />
-
-<!-- Change this code here by copy and pasting your template on line 15 -->
-<p>Welcome to your first GitHub Pages website!</p>
-
+<body onmousemove="changeColor(document.getElementById('back'),window.innerWidth,window.innerHeight,event.clientX,event.clientY)">
+	<div id="back">
+	</div>
+	<div id="log">
+		word: "", rx: 0, mrx: 0, hue-rotate: 0deg
+	</div>
 </body>
+<script type="text/javascript">
+	function changeColor(e,screenWidth,screenHeight,mouseX,mouseY){
+		var relateY = mouseY/screenHeight;
+		var relateX = mouseX/screenWidth;
+		e.style.filter = 'hue-rotate('+relateY*360+'deg)';
+		e.style.width = (100-relateX*75)+'%';
+		e.style.height = (100-relateX*75)+'%';
+		document.getElementById('log').innerHTML = `yx: [${relateY.toFixed(2)},${relateX.toFixed(2)}], hue-rotate: ${(relateY*180).toFixed(2)}deg`
+	}
+</script>
 </html>
