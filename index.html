@@ -4,66 +4,191 @@
 	<meta charset="UTF-8">
 	<title>wtf is happening</title>
 	<style type="text/css">
-		@import url('https://fonts.googleapis.com/css?family=Faster+One|Fugaz+One|Gravitas+One|Libre+Barcode+39|Monoton|Nosifer|Poller+One&display=swap');
+		@import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
 		body{
 			width: 100vw;
 			height: 100vh;
 			margin: 0;
 			padding: 0;
 			user-select: none;
+			font-family: 'Roboto Mono';
+			font-size: 3vh;
+		}
+		#main,#log-display{
+			position: absolute;
+			width: 100vw;
+			height: 100vh;
+			background: white;
 		}
 		#back{
 			position: absolute;
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%,-50%);
-			background: rgb(255,205,0);
-            background: linear-gradient(45deg, rgba(255,205,0,1) 0%, rgba(0,132,255,1) 100%);
+			background: pink;
 			filter: hue-rotate(0deg);
 			width: 50%;
 			height: 50%;
-		}
-		#text{
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%,-50%);
-			width: 100%;
-			height: 100%;
-			display: flex;
-			align-content: center;
-			align-items: center;
-			justify-content: center;
+			padding: 15px;
 			color: white;
+			z-index: 0;
 		}
-		.letter{
-			font-size: 10vw;
-			transform: rotate(0deg);
-			font-family: 'Fugaz One';
-			padding: 10px;
-		}
-		#log{
+		#switch{
 			position: absolute;
-			bottom: 1%;
-			left: 1%;
+			bottom: 2%;
+			left: 2%;
+			color: black;
+			z-index: 1;
+		}
+		#warn{
+			position: absolute;
+			bottom: 2%;
+			right: 2%;
+			color: red;
+			opacity: 0;
+		}
+		#log-show,#log-hide{
+			position: absolute;
+			top: 2%;
+			right: 2%;
+			color: black;
+		}
+		#log-list{
+			position: absolute;
+			top: 4%;
+			left: 2%;
+			color: black;
+		}
+		#switch:after{
+			content: '(switch mode)';
+			opacity: .5;
+			margin-left: 3px;
+		}
+		#switch:hover{
+			text-decoration: underline;
+		}
+		#log-show:after{
+			content: '(show)';
+			opacity: .5;
+			margin-left: 3px;
+		}
+		#log-hide:after{
+			content: '(hide)';
+			opacity: .5;
+			margin-left: 3px;
+		}
+		#log-show:hover{
+			text-decoration: underline;
+		}
+		#log-hide:hover{
+			text-decoration: underline;
 		}
 	</style>
 </head>
-<body onmousemove="changeColor(document.getElementById('back'),window.innerWidth,window.innerHeight,event.clientX,event.clientY)">
-	<div id="back">
+<body onmousemove="f_a(document.getElementById('back'),window.innerWidth,window.innerHeight,event.clientX,event.clientY)">
+	<div id="log-display">
+		<ul id="log-list">
+			<li>Added interface (mode switched, breakline warner, log list)</li>
+			<li>Added mode "moving"</li>
+			<li>Changed style and font</li>
+		</ul>
+		<div id="log-hide" onclick="hide()">
+			> log
+		</div>
 	</div>
-	<div id="log">
-		word: "", rx: 0, mrx: 0, hue-rotate: 0deg
+	<div id="main">
+		<div id="back">
+
+		</div>
+		<div id="switch" onclick="switchMode()">
+			mode: scaling
+		</div>
+		<div id="warn">
+			breakline
+		</div>
+		<div id="log-show" onclick="show()">
+			> log
+		</div>
 	</div>
 </body>
 <script type="text/javascript">
-	function changeColor(e,screenWidth,screenHeight,mouseX,mouseY){
+	var mode = 'scaling';
+	var breakline = document.getElementById('warn');
+	var main = document.getElementById('main');
+	function f_a(e,screenWidth,screenHeight,mouseX,mouseY){
 		var relateY = mouseY/screenHeight;
 		var relateX = mouseX/screenWidth;
-		e.style.filter = 'hue-rotate('+relateY*360+'deg)';
-		e.style.width = (100-relateX*75)+'%';
-		e.style.height = (100-relateX*75)+'%';
-		document.getElementById('log').innerHTML = `yx: [${relateY.toFixed(2)},${relateX.toFixed(2)}], hue-rotate: ${(relateY*180).toFixed(2)}deg`
+		var invRelateX = (screenWidth-mouseX)/screenWidth;
+		var invRelateY = (screenHeight-mouseY)/screenHeight;
+		var midRelateX = (mouseX - screenWidth/2)/(screenWidth/2);
+		var midRelateY = (mouseY - screenHeight/2)/(screenHeight/2);
+		switch (mode){
+			case 'scaling':
+				e.style.transform = 'translate(-50%,-50%)';
+				e.style.top = '50%';
+				e.style.left = '50%';
+				e.style.filter = 'hue-rotate('+relateY*180+'deg)';
+				breakline.style.opacity = 0;
+				if(midRelateX*85 > 84){
+					breakline.style.opacity = 1;
+				}
+				if(midRelateY*85 > 82){
+					breakline.style.opacity = 1;
+				}
+				e.style.width = Math.abs(midRelateX)*85+'%';
+				e.style.height = Math.abs(midRelateY)*85+'%';
+				e.innerHTML = `[${e.style.width},${e.style.height}]`;
+				e.style.borderRadius = '25px';
+				if(relateY<.5&&relateX>.5) e.style.borderTopRightRadius = '0px';
+				if(relateY>.5&&relateX>.5) e.style.borderBottomRightRadius = '0px';
+				if(relateY>.5&&relateX<.5) e.style.borderBottomLeftRadius = '0px';
+				if(relateY<.5&&relateX<.5) e.style.borderTopLeftRadius = '0px';
+				break;
+			case 'moving':
+				e.style.width = '35%';
+				e.style.height = '35%';
+				e.style.transform = '';
+				e.style.filter = 'hue-rotate('+relateY*180+'deg)';
+				e.style.borderRadius = '25px';
+				breakline.style.opacity = 0;
+				if(relateY > .75){
+					relateY = .75; 
+					breakline.style.opacity = 1;
+				}
+				if(relateY < .25){
+					relateY = .25; 
+					breakline.style.opacity = 1;
+				}
+				if(relateX > .75){
+					relateX = .75; 
+					breakline.style.opacity = 1;
+				}
+				if(relateX < .25){
+					relateX = .25; 
+					breakline.style.opacity = 1;
+				}
+				e.style.top = relateY*100+'%';
+				e.style.left = relateX*100+'%';
+				e.innerHTML = `[${e.style.top},${e.style.left}] centered`;
+				break;
+		}
+	}
+	function switchMode(){
+		switch(mode){
+			case 'scaling':
+				mode = 'moving';
+				break;
+			case 'moving':
+				mode = 'scaling';
+				break;
+		}
+		document.getElementById('switch').innerHTML = 'mode: '+mode;
+	}
+	function show(){
+		main.style.display = 'none';
+	}
+	function hide(){
+		main.style.display = 'block';
 	}
 </script>
 </html>
