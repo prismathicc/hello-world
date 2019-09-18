@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>wtf is happening</title>
+	<title>table v1.0</title>
 	<style type="text/css">
 		@import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
+		*{
+			box-sizing: border-box;
+		}
 		body{
 			width: 100vw;
 			height: 100vh;
@@ -13,182 +16,211 @@
 			user-select: none;
 			font-family: 'Roboto Mono';
 			font-size: 3vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
-		#main,#log-display{
-			position: absolute;
-			width: 100vw;
-			height: 100vh;
-			background: white;
+		#main{
+			width: 75%;
+			height: 75%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
-		#back{
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%,-50%);
-			background: pink;
-			filter: hue-rotate(0deg);
-			width: 50%;
-			height: 50%;
-			padding: 15px;
-			color: white;
-			z-index: 0;
+		#table-wrap{
+			width: 100%;
+			height: 100%;
+			display: flex;
+			border: 2px solid gray;
+			box-sizing: border-box;
 		}
-		#switch{
-			position: absolute;
-			bottom: 2%;
-			left: 2%;
-			color: black;
-			z-index: 1;
+		.column{
+			width: 1px;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			border-left: 2px solid gray;
+			border-right: 2px solid gray;
+			box-sizing: border-box;
 		}
-		#warn{
+		.cell{
+			width: 100%;
+			height: 1px;
+			border-top: 2px solid gray;
+			border-bottom: 2px solid gray;
+			box-sizing: border-box;
+		}
+		.bcell{
+			width: auto;
+			height: auto;
+			border: 0;
+		}
+		.item{
+			width: 100%;
+			height: 100%;
+			font-size:;
+			transition: all .5s ease;
+			overflow-y: auto;
+			overflow-x: auto;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		#add-item{
 			position: absolute;
-			bottom: 2%;
-			right: 2%;
+			bottom: 3%;
+			left: 3%;
+			font-size: 15px;
+			display: flex;
+			opacity: .5;
+		}
+		#add-table{
+			position: absolute;
+			bottom: 3%;
+			right: 3%;
+			font-size: 15px;
+			display: flex;
+			opacity: .5;
+		}
+		#add-item:hover{
+			opacity: 1;
+		}
+		#add-table:hover{
+			opacity: 1;
+		}
+		input{
+			outline: none;
+			font-family: 'Roboto Mono';
+			border: 0;
+			border-bottom: 2px solid gray;
+			margin-right: 10px;
+		}
+		#button:hover{
+			cursor: pointer;
+			text-decoration: underline;
+		}
+		#remove{
+			position: absolute;
+			top: 3%;
+			left: 3%;
+			opacity: .5;
+		}
+		#remove:after{
+			content: '(drag)';
+			opacity: .5;
+		}
+		#remove:hover{
 			color: red;
-			opacity: 0;
-		}
-		#log-show,#log-hide{
-			position: absolute;
-			top: 2%;
-			right: 2%;
-			color: black;
-		}
-		#log-list{
-			position: absolute;
-			top: 4%;
-			left: 2%;
-			color: black;
-		}
-		#switch:after{
-			content: '(switch mode)';
-			opacity: .5;
-			margin-left: 3px;
-		}
-		#switch:hover{
-			text-decoration: underline;
-		}
-		#log-show:after{
-			content: '(show)';
-			opacity: .5;
-			margin-left: 3px;
-		}
-		#log-hide:after{
-			content: '(hide)';
-			opacity: .5;
-			margin-left: 3px;
-		}
-		#log-show:hover{
-			text-decoration: underline;
-		}
-		#log-hide:hover{
-			text-decoration: underline;
+			opacity: 1;
 		}
 	</style>
 </head>
-<body onmousemove="f_a(document.getElementById('back'),window.innerWidth,window.innerHeight,event.clientX,event.clientY)">
-	<div id="log-display">
-		<ul id="log-list">
-			<li>Added interface (mode switched, breakline warner, log list)</li>
-			<li>Added mode "moving"</li>
-			<li>Changed style and font</li>
-		</ul>
-		<div id="log-hide" onclick="hide()">
-			> log
-		</div>
-	</div>
+<body onmouseup="put()">
 	<div id="main">
-		<div id="back">
+		<div id="table-wrap">
+			<!--<div class="column">
+				<div class="cell imanitem" onmousemove="preview(this)">
+					<div id="imanitem" class="item" onmousedown='pick(this)' onmouseup="put(this)">im an item</div>
+				</div>
+				<div class="cell" onmousemove="preview(this)"></div>
+			</div>
+			<div class="column">
+				<div class="cell" onmousemove="preview(this)"></div>
+				<div class="cell imananotheritem" onmousemove="preview(this)">
+					<div id="imananotheritem" class="item" onmousedown='pick(this)' onmouseup="put(this)">im an another item</div>
+				</div>
 
+			</div>-->
 		</div>
-		<div id="switch" onclick="switchMode()">
-			mode: scaling
+		<div id="add-item">
+			<input type="text" placeholder="x,y,id,txt,color">
+			<div id="button" onclick="generateItem(this.parentElement.children[0].value.split(','))">create item</div>
 		</div>
-		<div id="warn">
-			breakline
+		<div id="add-table">
+			<input type="text" placeholder="x,y,true/false">
+			<div id="button" onclick="generateTable(this.parentElement.children[0].value.split(','))">create table</div>
 		</div>
-		<div id="log-show" onclick="show()">
-			> log
+		<div class="cell bcell" id="remove" onmouseup="removeItem(this)">
+			REMOVE ELEMENT
 		</div>
 	</div>
 </body>
 <script type="text/javascript">
-	var mode = 'scaling';
-	var breakline = document.getElementById('warn');
-	var main = document.getElementById('main');
-	function f_a(e,screenWidth,screenHeight,mouseX,mouseY){
-		var relateY = mouseY/screenHeight;
-		var relateX = mouseX/screenWidth;
-		var invRelateX = (screenWidth-mouseX)/screenWidth;
-		var invRelateY = (screenHeight-mouseY)/screenHeight;
-		var midRelateX = (mouseX - screenWidth/2)/(screenWidth/2);
-		var midRelateY = (mouseY - screenHeight/2)/(screenHeight/2);
-		switch (mode){
-			case 'scaling':
-				e.style.transform = 'translate(-50%,-50%)';
-				e.style.top = '50%';
-				e.style.left = '50%';
-				e.style.filter = 'hue-rotate('+relateY*180+'deg)';
-				breakline.style.opacity = 0;
-				if(midRelateX*85 > 84){
-					breakline.style.opacity = 1;
+	var pickedId = '';
+	function pick(e){
+		e.style.transform = 'scale(.9)';
+		e.style.opacity = .7;
+		pickedId = e.id;
+	}
+	function preview(e){
+		if(e.classList.length == 1 && pickedId !== ''){
+			var item = document.getElementById(pickedId);
+			var cells = document.getElementsByClassName('cell');
+			e.classList.add(item.id);
+			e.appendChild(item);
+			for(var i=0;i<cells.length;i++){
+				if(cells[i] !== e && cells[i].classList.contains(item.id)){
+					cells[i].classList.remove(item.id);
 				}
-				if(midRelateY*85 > 82){
-					breakline.style.opacity = 1;
-				}
-				e.style.width = Math.abs(midRelateX)*85+'%';
-				e.style.height = Math.abs(midRelateY)*85+'%';
-				e.innerHTML = `[${e.style.width},${e.style.height}]`;
-				e.style.borderRadius = '25px';
-				if(relateY<.5&&relateX>.5) e.style.borderTopRightRadius = '0px';
-				if(relateY>.5&&relateX>.5) e.style.borderBottomRightRadius = '0px';
-				if(relateY>.5&&relateX<.5) e.style.borderBottomLeftRadius = '0px';
-				if(relateY<.5&&relateX<.5) e.style.borderTopLeftRadius = '0px';
-				break;
-			case 'moving':
-				e.style.width = '35%';
-				e.style.height = '35%';
-				e.style.transform = '';
-				e.style.filter = 'hue-rotate('+relateY*180+'deg)';
-				e.style.borderRadius = '25px';
-				breakline.style.opacity = 0;
-				if(relateY > .75){
-					relateY = .75; 
-					breakline.style.opacity = 1;
-				}
-				if(relateY < .25){
-					relateY = .25; 
-					breakline.style.opacity = 1;
-				}
-				if(relateX > .75){
-					relateX = .75; 
-					breakline.style.opacity = 1;
-				}
-				if(relateX < .25){
-					relateX = .25; 
-					breakline.style.opacity = 1;
-				}
-				e.style.top = relateY*100+'%';
-				e.style.left = relateX*100+'%';
-				e.innerHTML = `[${e.style.top},${e.style.left}] centered`;
-				break;
+			}
 		}
 	}
-	function switchMode(){
-		switch(mode){
-			case 'scaling':
-				mode = 'moving';
-				break;
-			case 'moving':
-				mode = 'scaling';
-				break;
+	function put(){
+		if(pickedId !== ''){
+			var item = document.getElementById(pickedId);
+			item.style.transform = '';
+			item.style.opacity = 1;
+			pickedId = '';
 		}
-		document.getElementById('switch').innerHTML = 'mode: '+mode;
 	}
-	function show(){
-		main.style.display = 'none';
+	function generateTable(data){
+		if(data[2]){
+			var main = document.getElementById('main');
+			document.getElementById('table-wrap').remove();
+			var tableWrap = document.createElement('div');
+			tableWrap.id = 'table-wrap';
+			tableWrap.style.width = '100%';
+			tableWrap.style.height = '100%';
+			tableWrap.style.display = 'flex';
+			tableWrap.style.border = '2px solid gray';
+			tableWrap.style.boxSizing = 'border-box';
+			main.appendChild(tableWrap);
+			for(var i=0;i<data[0];i++){
+				var newcolumn = document.createElement('div');
+				newcolumn.classList.add('column');
+				newcolumn.style.width = 100/data[0]+'%';
+				tableWrap.appendChild(newcolumn);
+			}
+			for(var i=0;i<tableWrap.children.length;i++){
+				for(var j=0;j<data[1];j++){
+					var newCell = document.createElement('div');
+					newCell.classList.add('cell');
+					newCell.onmousemove = function(){preview(this)};
+					newCell.style.height = 100/data[1]+'%';
+					tableWrap.children[i].appendChild(newCell);
+				}
+			}
+		}
 	}
-	function hide(){
-		main.style.display = 'block';
+	function generateItem(data){
+		var tableWrap = document.getElementById('table-wrap');
+		var newItem = document.createElement('div');
+		newItem.classList.add('item');
+		newItem.onmousedown = function(){pick(this)};
+		newItem.id = data[2];
+		newItem.innerHTML = data[3];
+		newItem.style.backgroundColor = data[4];
+		if(tableWrap.children[data[0]-1].children[data[1]-1].children.length == 0){
+			tableWrap.children[data[0]-1].children[data[1]-1].appendChild(newItem);
+		}
 	}
+	function removeItem(){
+		if(pickedId !== ''){
+			document.getElementById(pickedId).parentElement.classList.remove(pickedId);
+			document.getElementById(pickedId).remove();
+		}
+	}
+	generateTable([4,4,true]);
+	generateItem([4,4,'credit','by prismatic_','lightgreen']);
 </script>
 </html>
