@@ -218,6 +218,7 @@
 		if(pickedId !== ''){
 			document.getElementById(pickedId).parentElement.classList.remove(pickedId);
 			document.getElementById(pickedId).remove();
+			pickedId = '';
 		}
 	}
 	generateTable([4,4,true]);
