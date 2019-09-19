@@ -19,6 +19,7 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			overflow: hidden;
 		}
 		#main{
 			width: 75%;
@@ -49,6 +50,17 @@
 			border-top: 2px solid gray;
 			border-bottom: 2px solid gray;
 			box-sizing: border-box;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.cell-highlight{
+			width: 100%;
+			height: 100%;
+			border: 8px solid pink;
+			display: none;
+			transition: all .5s ease;
+			background: transparent;
 		}
 		.bcell{
 			width: auto;
@@ -59,7 +71,6 @@
 			width: 100%;
 			height: 100%;
 			font-size:;
-			transition: all .5s ease;
 			overflow-y: auto;
 			overflow-x: auto;
 			display: flex;
@@ -123,7 +134,7 @@
 		}
 	</style>
 </head>
-<body onmouseup="put()">
+<body onmouseup="put()" onmousemove="move(window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)">
 	<div id="main">
 		<div id="table-wrap">
 			<!--<div class="column">
@@ -158,16 +169,42 @@
 </body>
 <script type="text/javascript">
 	var pickedId = '';
-	function pick(e){
-		e.style.transform = 'scale(.9)';
+	var highlighted;
+	function pick(e,w,h,mx,my){
+		e.style.transform = 'scale(0.75)';
 		e.style.opacity = .7;
 		pickedId = e.id;
+		e.style.position = 'absolute';
+		e.style.width = e.parentElement.parentElement.style.width;
+		e.style.height = e.parentElement.style.height;
+		e.style.transition = '';
+		e.style.top = my/h*100+'%';
+		e.style.left = mx/w*100+'%';
+	}
+	function move(w,h,mx,my,target){
+		if(pickedId !== ''){
+			var item = document.getElementById(pickedId);
+			item.style.top = my/h*100+'%';
+			item.style.left = mx/w*100+'%';
+			if(target == document.body){
+				put();
+			}
+		}
 	}
 	function preview(e){
 		var item = document.getElementById(pickedId);
-		var secondItem = e.firstChild;
+		var secondItem = e.children[1];
 		var cells = document.getElementsByClassName('cell');
 		var info = document.getElementById('info');
+		var highlight = e.firstChild;
+		if(pickedId !== ''){
+			if(e !== highlighted && highlighted !== undefined){
+				highlighted.firstChild.style.display = 'none';
+			}
+			highlighted = e;
+			highlight.style.display = 'block';
+			highlight.style.borderColor = item.style.backgroundColor;
+		}
 		info.innerHTML = e.id;
 		if(e.classList.length == 1 && pickedId !== ''){
 			var cells = document.getElementsByClassName('cell');
@@ -186,14 +223,20 @@
 			item.parentElement.classList.remove(item.id);
 			item.parentElement.appendChild(secondItem);
 			e.appendChild(item);
-		} 
+		}
 	}
 	function put(){
 		if(pickedId !== ''){
 			var item = document.getElementById(pickedId);
 			item.style.transform = '';
 			item.style.opacity = 1;
+			item.style.position = '';
+			item.style.width = '100%';
+			item.style.height = '100%';
+			item.style.transition = 'all .1s ease';
 			pickedId = '';
+			highlighted.firstChild.style.display = 'none';
+			highlighted = undefined;
 		}
 	}
 	function generateTable(data){
@@ -216,10 +259,13 @@
 			for(var i=0;i<tableWrap.children.length;i++){
 				for(var j=0;j<data[1];j++){
 					var newCell = document.createElement('div');
+					var newCellHL = document.createElement('div');
 					newCell.classList.add('cell');
 					newCell.onmousemove = function(){preview(this)};
 					newCell.style.height = 100/data[1]+'%';
 					newCell.id = 'x: '+(i+1)+',y: '+(j+1)
+					newCellHL.classList.add('cell-highlight');
+					newCell.appendChild(newCellHL);
 					tableWrap.children[i].appendChild(newCell);
 				}
 			}
@@ -228,11 +274,11 @@
 		var tableWrap = document.getElementById('table-wrap');
 		var newItem = document.createElement('div');
 		newItem.classList.add('item');
-		newItem.onmousedown = function(){pick(this)};
+		newItem.onmousedown = function(){pick(this,window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)};
 		newItem.id = data[2];
 		newItem.innerHTML = data[3];
 		newItem.style.backgroundColor = data[4];
-		if(tableWrap.children[data[0]-1].children[data[1]-1].children.length == 0){
+		if(tableWrap.children[data[0]-1].children[data[1]-1].children.length == 1){
 			tableWrap.children[data[0]-1].children[data[1]-1].appendChild(newItem);
 			tableWrap.children[data[0]-1].children[data[1]-1].classList.add(newItem.id);
 		}
