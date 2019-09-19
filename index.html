@@ -57,7 +57,7 @@
 		.cell-highlight{
 			width: 100%;
 			height: 100%;
-			border: 8px solid pink;
+			border: 8px solid gray;
 			display: none;
 			transition: all .5s ease;
 			background: transparent;
@@ -149,7 +149,7 @@
 			</div>-->
 		</div>
 		<div id="add-item">
-			<input type="text" placeholder="x,y,id,txt,color">
+			<input type="text" placeholder="x,y,txt,color">
 			<div id="button" onclick="generateItem(this.parentElement.children[0].value.split(','))">create item</div>
 		</div>
 		<div id="add-table">
@@ -179,6 +179,15 @@
 		e.style.transition = '';
 		e.style.top = my/h*100+'%';
 		e.style.left = mx/w*100+'%';
+		var highlight = e.parentElement.firstChild;
+		if(pickedId !== ''){
+			if(e !== highlighted && highlighted !== undefined){
+				highlighted.firstChild.style.display = 'none';
+			}
+			highlighted = e.parentElement;
+			highlight.style.display = 'block';
+			highlight.style.borderColor = e.style.backgroundColor;
+		}
 	}
 	function move(w,h,mx,my,target){
 		if(pickedId !== ''){
@@ -209,11 +218,6 @@
 			var cells = document.getElementsByClassName('cell');
 			e.classList.add(item.id);
 			e.appendChild(item);
-			for(var i=0;i<cells.length;i++){
-				if(cells[i] !== e && cells[i].classList.contains(item.id)){
-					cells[i].classList.remove(item.id);
-				}
-			}
 		}
 		if(e.classList.length == 2 && pickedId !== '' && item.parentElement !== e){
 			e.classList.add(item.id);
@@ -222,6 +226,12 @@
 			firstParent.classList.remove(item.id);
 			firstParent.appendChild(secondItem);
 			e.appendChild(item);
+			firstParent = item.parentElement;
+		}
+		for(var i=0;i<cells.length;i++){
+			if(pickedId !== '' && cells[i] !== e && cells[i].classList.contains(item.id)){
+				cells[i].classList.remove(item.id);
+			}
 		}
 	}
 	function put(){
@@ -272,14 +282,19 @@
 	}
 	function generateItem(data){
 		var tableWrap = document.getElementById('table-wrap');
+		var items = document.getElementsByClassName('item');
 		var newItem = document.createElement('div');
+		var admiss;
 		newItem.classList.add('item');
 		newItem.onmousedown = function(){pick(this,window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)};
-		newItem.id = data[2];
-		newItem.innerHTML = data[3];
-		newItem.style.backgroundColor = data[4];
+		newItem.innerHTML = data[2];
+		newItem.style.backgroundColor = data[3];
 		if(tableWrap.children[data[0]-1].children[data[1]-1].children.length == 1){
 			tableWrap.children[data[0]-1].children[data[1]-1].appendChild(newItem);
+			admiss = true;
+		}
+		newItem.id = items.length;
+		if(admiss){
 			tableWrap.children[data[0]-1].children[data[1]-1].classList.add(newItem.id);
 		}
 	}
@@ -292,8 +307,9 @@
 			highlighted = undefined;
 		}
 	}
-	generateTable([4,4]);
-	generateItem([4,4,'1','owo','lightgreen']);
-	generateItem([4,3,'2','-w-','lightblue']);
+	generateTable([3,3]);
+	generateItem([3,3,'owo','lightgreen']);
+	generateItem([3,2,'-w-','lightblue']);
+	generateItem([3,1,'uwu','pink']);
 </script>
 </html>
