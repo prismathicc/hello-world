@@ -167,6 +167,8 @@
 <script type="text/javascript">
 	var pickedId = '';
 	var firstParent;
+	var opponent;
+	var opponentFirstParent;
 	var highlighted;
 	function pick(e,w,h,mx,my){
 		e.style.transform = 'scale(0.75)';
@@ -220,18 +222,31 @@
 			e.appendChild(item);
 		}
 		if(e.classList.length == 2 && pickedId !== '' && item.parentElement !== e){
+			opponent = undefined;
+			opponentFirstParent = undefined;
+			if(opponent == undefined){
+				console.log('ok here is an opponent');
+				opponent = secondItem;
+				opponentFirstParent = e;
+			}
 			e.classList.add(item.id);
 			firstParent.classList.add(secondItem.id);
 			e.classList.remove(secondItem.id);
 			firstParent.classList.remove(item.id);
 			firstParent.appendChild(secondItem);
 			e.appendChild(item);
-			firstParent = item.parentElement;
 		}
 		for(var i=0;i<cells.length;i++){
 			if(pickedId !== '' && cells[i] !== e && cells[i].classList.contains(item.id)){
 				cells[i].classList.remove(item.id);
 			}
+		}
+		if(e !== opponentFirstParent && opponent !== undefined){
+			opponent.parentElement.classList.remove(opponent.id);
+			opponentFirstParent.classList.add(opponent.id);
+			opponentFirstParent.appendChild(opponent);
+			opponent = undefined;
+			opponentFirstParent = undefined;
 		}
 	}
 	function put(){
@@ -247,6 +262,8 @@
 			firstParent = undefined;
 			highlighted.firstChild.style.display = 'none';
 			highlighted = undefined;
+			opponent = undefined;
+			opponentFirstParent = undefined;
 		}
 	}
 	function generateTable(data){
