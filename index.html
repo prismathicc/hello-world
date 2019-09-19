@@ -62,11 +62,6 @@
 			transition: all .5s ease;
 			background: transparent;
 		}
-		.bcell{
-			width: auto;
-			height: auto;
-			border: 0;
-		}
 		.item{
 			width: 100%;
 			height: 100%;
@@ -123,6 +118,8 @@
 			top: 3%;
 			left: 3%;
 			opacity: .5;
+			width: 20vw;
+			height: 13vh;
 		}
 		#remove:after{
 			content: '(drag)';
@@ -159,7 +156,7 @@
 			<input type="text" placeholder="x,y">
 			<div id="button" onclick="generateTable(this.parentElement.children[0].value.split(','))">create table</div>
 		</div>
-		<div class="cell bcell" id="remove" onmouseup="removeItem(this)">
+		<div id="remove" onmouseup="removeItem(this)">
 			REMOVE ELEMENT
 		</div>
 		<div id="info">
@@ -288,6 +285,8 @@
 			document.getElementById(pickedId).parentElement.classList.remove(pickedId);
 			document.getElementById(pickedId).remove();
 			pickedId = '';
+			highlighted.firstChild.style.display = 'none';
+			highlighted = undefined;
 		}
 	}
 	generateTable([4,4]);
