@@ -149,12 +149,12 @@
 			</div>-->
 		</div>
 		<div id="add-item">
-			<input type="text" placeholder="x,y,txt,color">
-			<div id="button" onclick="generateItem(this.parentElement.children[0].value.split(','))">create item</div>
+			<input type="text" placeholder="x;y;txt;color">
+			<div id="button" onclick="generateItem(this.parentElement.children[0].value.split(';'))">create item</div>
 		</div>
 		<div id="add-table">
-			<input type="text" placeholder="x,y">
-			<div id="button" onclick="generateTable(this.parentElement.children[0].value.split(','))">create table</div>
+			<input type="text" placeholder="x;y">
+			<div id="button" onclick="generateTable(this.parentElement.children[0].value.split(';'))">create table</div>
 		</div>
 		<div id="remove" onmouseup="removeItem(this)">
 			REMOVE ELEMENT
