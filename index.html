@@ -82,6 +82,14 @@
 			display: flex;
 			opacity: .5;
 		}
+		#info{
+			position: absolute;
+			top: 3%;
+			right: 3%;
+			font-size: 15px;
+			display: flex;
+			opacity: .5;
+		}
 		#add-item:hover{
 			opacity: 1;
 		}
@@ -137,11 +145,14 @@
 			<div id="button" onclick="generateItem(this.parentElement.children[0].value.split(','))">create item</div>
 		</div>
 		<div id="add-table">
-			<input type="text" placeholder="x,y,true/false">
+			<input type="text" placeholder="x,y">
 			<div id="button" onclick="generateTable(this.parentElement.children[0].value.split(','))">create table</div>
 		</div>
 		<div class="cell bcell" id="remove" onmouseup="removeItem(this)">
 			REMOVE ELEMENT
+		</div>
+		<div id="info">
+			x:,y:
 		</div>
 	</div>
 </body>
@@ -153,8 +164,12 @@
 		pickedId = e.id;
 	}
 	function preview(e){
+		var item = document.getElementById(pickedId);
+		var secondItem = e.firstChild;
+		var cells = document.getElementsByClassName('cell');
+		var info = document.getElementById('info');
+		info.innerHTML = e.id;
 		if(e.classList.length == 1 && pickedId !== ''){
-			var item = document.getElementById(pickedId);
 			var cells = document.getElementsByClassName('cell');
 			e.classList.add(item.id);
 			e.appendChild(item);
@@ -164,6 +179,14 @@
 				}
 			}
 		}
+		if(e.classList.length == 2 && pickedId !== '' && item.parentElement !== e){
+			e.classList.add(item.id);
+			item.parentElement.classList.add(secondItem.id);
+			e.classList.remove(secondItem.id);
+			item.parentElement.classList.remove(item.id);
+			item.parentElement.appendChild(secondItem);
+			e.appendChild(item);
+		} 
 	}
 	function put(){
 		if(pickedId !== ''){
@@ -174,7 +197,6 @@
 		}
 	}
 	function generateTable(data){
-		if(data[2]){
 			var main = document.getElementById('main');
 			document.getElementById('table-wrap').remove();
 			var tableWrap = document.createElement('div');
@@ -197,10 +219,10 @@
 					newCell.classList.add('cell');
 					newCell.onmousemove = function(){preview(this)};
 					newCell.style.height = 100/data[1]+'%';
+					newCell.id = 'x: '+(i+1)+',y: '+(j+1)
 					tableWrap.children[i].appendChild(newCell);
 				}
 			}
-		}
 	}
 	function generateItem(data){
 		var tableWrap = document.getElementById('table-wrap');
@@ -212,6 +234,7 @@
 		newItem.style.backgroundColor = data[4];
 		if(tableWrap.children[data[0]-1].children[data[1]-1].children.length == 0){
 			tableWrap.children[data[0]-1].children[data[1]-1].appendChild(newItem);
+			tableWrap.children[data[0]-1].children[data[1]-1].classList.add(newItem.id);
 		}
 	}
 	function removeItem(){
@@ -221,7 +244,8 @@
 			pickedId = '';
 		}
 	}
-	generateTable([4,4,true]);
-	generateItem([4,4,'credit','by prismatic_','lightgreen']);
+	generateTable([4,4]);
+	generateItem([4,4,'1','owo','lightgreen']);
+	generateItem([4,3,'2','-w-','lightblue']);
 </script>
 </html>
