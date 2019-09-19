@@ -166,11 +166,13 @@
 </body>
 <script type="text/javascript">
 	var pickedId = '';
+	var firstParent;
 	var highlighted;
 	function pick(e,w,h,mx,my){
 		e.style.transform = 'scale(0.75)';
 		e.style.opacity = .7;
 		pickedId = e.id;
+		firstParent = e.parentElement;
 		e.style.position = 'absolute';
 		e.style.width = e.parentElement.parentElement.style.width;
 		e.style.height = e.parentElement.style.height;
@@ -215,10 +217,10 @@
 		}
 		if(e.classList.length == 2 && pickedId !== '' && item.parentElement !== e){
 			e.classList.add(item.id);
-			item.parentElement.classList.add(secondItem.id);
+			firstParent.classList.add(secondItem.id);
 			e.classList.remove(secondItem.id);
-			item.parentElement.classList.remove(item.id);
-			item.parentElement.appendChild(secondItem);
+			firstParent.classList.remove(item.id);
+			firstParent.appendChild(secondItem);
 			e.appendChild(item);
 		}
 	}
@@ -232,6 +234,7 @@
 			item.style.height = '100%';
 			item.style.transition = 'all .1s ease';
 			pickedId = '';
+			firstParent = undefined;
 			highlighted.firstChild.style.display = 'none';
 			highlighted = undefined;
 		}
