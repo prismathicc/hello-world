@@ -222,10 +222,7 @@
 			e.appendChild(item);
 		}
 		if(e.classList.length == 2 && pickedId !== '' && item.parentElement !== e){
-			opponent = undefined;
-			opponentFirstParent = undefined;
 			if(opponent == undefined){
-				console.log('ok here is an opponent');
 				opponent = secondItem;
 				opponentFirstParent = e;
 			}
@@ -245,8 +242,10 @@
 			opponent.parentElement.classList.remove(opponent.id);
 			opponentFirstParent.classList.add(opponent.id);
 			opponentFirstParent.appendChild(opponent);
-			opponent = undefined;
-			opponentFirstParent = undefined;
+			if(opponent !== secondItem){
+				opponent = secondItem;
+				opponentFirstParent = e;
+			}
 		}
 	}
 	function put(){
