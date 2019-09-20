@@ -549,6 +549,7 @@
 			if(cell.children.length > 0){
 				cell.children[0].remove();
 			}
+			cell.classList.add(newItem.id);
 			cell.appendChild(newItem);
 		} else {
 			var cell = document.getElementById(miniItemData[0]);
@@ -561,6 +562,7 @@
 			if(cell.children.length > 0){
 				cell.children[0].remove();
 			}
+			cell.classList.add(newItem.id);
 			cell.appendChild(newItem);
 		}
 	}
@@ -615,6 +617,7 @@
 	function switchCreatePlace(e){
 		var coords = document.getElementById('item-block-input-area').children[0];
 		coords.innerHTML = e.id;
+		miniItemData[0] = e.id;
 	}
 	generateTable();
 	generateMiniTable([3,3]);
