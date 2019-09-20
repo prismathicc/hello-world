@@ -65,7 +65,7 @@
 			opacity: 1;
 			margin-right: 15px;
 		}
-		#settings-table-block{
+		#settings-table-block,#settings-item-block{
 			height: 80%;
 			width: 100%;
 			display: flex;
@@ -73,7 +73,7 @@
 			align-items: center;
 			flex-direction: column;
 		}
-		#table-block-input-area{
+		#table-block-input-area,#item-block-input-area{
 			color: rgba(0,0,0,.65);
 			font-size: 15px;
 			height: 20%;
@@ -88,7 +88,13 @@
 			width: 30%;
 			height: 50%;
 		}
-		.input{
+		#ib-place,#ib-text,#ib-color{
+			width: 30%;
+			height: 50%;
+			margin-right: 3%;
+			margin-left: 3%;
+		}
+		.input,#ib-place{
 			transition: all .5s ease;
 			outline: none;
 			border-radius: 10px;
@@ -97,6 +103,9 @@
 			padding-left: 3px;
 			border: 0;
 			border: 2px solid transparent;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 		.input:focus{
 			border: 2px solid rgba(0,0,0,.2);
@@ -129,11 +138,11 @@
 		.button:active{
 			transform: scale(1.15);
 		}
-		#tb-c{
+		#tb-c,#ib-r{
 			width: 50%;
 			height: 50%;
 		}
-		#table-block-preview-area{
+		#table-block-preview-area,#item-block-preview-area{
 			color: rgba(0,0,0,.5);
 			font-size: 15px;
 			height: 60%;
@@ -142,12 +151,22 @@
 			justify-content: center;
 			align-items: center;
 		}
-		#table-block-button-area{
+		#table-block-button-area,#item-block-button-area{
 			width: 100%;
 			height: 20%;
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			flex-direction: column;
+			font-size: 12px;
+		}
+		#table-block-button-area button, #item-block-button-area button{
+			margin-bottom: 5px;
+		}
+		#table-block-button-area div, #item-block-button-area div{
+			width: 65%;
+			text-align: center;
+			color: rgba(0,0,0,.5);
 		}
 		#main-display{
 			display: flex;
@@ -198,6 +217,18 @@
 			align-items: center;
 			justify-content: center;
 			border-radius: 3px;
+		}
+		.mini-item{
+			width: 75%;
+			height: 75%;
+			overflow-y: auto;
+			overflow-x: auto;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 3px;
+			color: black;
+			font-size: 20px;
 		}
 		#add-item{
 			position: absolute;
@@ -295,7 +326,11 @@
 <body onmouseup="put()" onmousemove="move(window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)">
 	<div id="settings-display">
 		<div id="settings-main-block">
-			<div id="settings-main-block-label">Таблица</div>
+			<div id="settings-main-block-label" onclick="switchLabel(this)">
+				<div>
+					Таблица
+				</div>
+			</div>
 			<div id="settings-table-block">
 				<div id="table-block-input-area">
 					<input type="number" id="tb-x" placeholder="Ш" class="input" oninput="generateMiniTable([eval(this.value),eval(this.parentElement.children[1].value)])" max="56" maxlength="2">на
@@ -306,6 +341,20 @@
 				</div>
 				<div id="table-block-button-area">
 					<button class="button" id="tb-c" onclick="generateTable()">Создать</button>
+				</div>
+			</div>
+			<div id="settings-item-block" style="display: none">
+				<div id="item-block-input-area">
+					<div id="ib-place">0;0</div>
+					<input type="text" id="ib-text" class="input" placeholder="Текст" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.value,this.parentElement.children[2].value])">
+					<input type="text" id="ib-color" class="input" placeholder="Цвет" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.parentElement.children[1].value,this.value])">
+				</div>
+				<div id="item-block-preview-area">
+					
+				</div>
+				<div id="item-block-button-area">
+					<button class="button" id="ib-r" onclick="generateItem()">Заменить</button>
+					<div>ЛКМ по клетке для выбора.</div>
 				</div>
 			</div>
 		</div>
@@ -335,6 +384,7 @@
 	var opponentFirstParent;
 	var highlighted;
 	var miniTableData = [3,3];
+	var miniItemData = ['2;2','Элемент','lightblue'];
 	function pick(e,w,h,mx,my){
 		e.style.transform = 'scale(0.75)';
 		e.style.opacity = .7;
@@ -446,8 +496,9 @@
 					var newCell = document.createElement('div');
 					newCell.classList.add('cell');
 					newCell.onmousemove = function(){preview(this)};
+					newCell.onmousedown = function(){switchCreatePlace(this)};
 					newCell.style.height = 100/data[1]+'%';
-					newCell.id = 'x: '+(i+1)+', y: '+(j+1)
+					newCell.id = (i+1)+';'+(j+1)
 					tableWrap.children[i].appendChild(newCell);
 				}
 			}
@@ -477,31 +528,57 @@
 					var newCellHL = document.createElement('div');
 					newCell.classList.add('mini-cell');
 					newCell.onmousemove = function(){preview(this)};
+					newCell.onmousedown = function(){turnToPlace(this)};
 					newCell.style.height = 100/data[1]+'%';
-					newCell.id = 'x: '+(i+1)+', y: '+(j+1)
 					newCell.appendChild(newCellHL);
 					tableWrap.children[i].appendChild(newCell);
 				}
 			}
 		}
 	}
-	function generateItem(data){
-			var tableWrap = document.getElementById('table-wrap');
-			var items = document.getElementsByClassName('item');
-			var newItem = document.createElement('div');
-			var admiss;
+	function generateItem(data,console){
+		var tableWrap = document.getElementById('table-wrap');
+		var items = document.getElementsByClassName('item');
+		var newItem = document.createElement('div');
+		if(console){
+			var cell = document.getElementById(data[0]);
 			newItem.classList.add('item');
 			newItem.onmousedown = function(){pick(this,window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)};
-			newItem.innerHTML = data[2];
-			newItem.style.backgroundColor = data[3];
-			if(tableWrap.children[data[0]-1].children[data[1]-1].children.length == 0){
-				tableWrap.children[data[0]-1].children[data[1]-1].appendChild(newItem);
-				admiss = true;
-			}
+			newItem.innerHTML = data[1];
+			newItem.style.backgroundColor = data[2];
 			newItem.id = items.length;
-			if(admiss){
-				tableWrap.children[data[0]-1].children[data[1]-1].classList.add(newItem.id);
+			if(cell.children.length > 0){
+				cell.children[0].remove();
 			}
+			cell.appendChild(newItem);
+		} else {
+			var cell = document.getElementById(miniItemData[0]);
+			newItem.classList.add('item');
+			newItem.onmousedown = function(){pick(this,window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)};
+			newItem.innerHTML = miniItemData[1];
+			newItem.style.backgroundColor = miniItemData[2];
+			newItem.id = items.length;
+			cell.appendChild(newItem);
+			if(cell.children.length > 0){
+				cell.children[0].remove();
+			}
+			cell.appendChild(newItem);
+		}
+	}
+	function generateMiniItem(data){
+		var container = document.getElementById('item-block-preview-area');
+		var newItem = document.createElement('div');
+		newItem.classList.add('mini-item');
+		newItem.innerHTML = data[1];
+		newItem.style.backgroundColor = data[2];
+		container.appendChild(newItem);
+	}
+	function changeMiniItem(data){
+		var item = document.getElementById('item-block-preview-area').children[0];
+		var coords = document.getElementById('item-block-input-area').children[0].innerText;
+		item.innerHTML = data[1];
+		item.style.backgroundColor = data[2];
+		miniItemData = data;
 	}
 	function removeItem(){
 		if(pickedId !== ''){
@@ -522,10 +599,27 @@
 			display.style.width = '0%';
 		}
 	}
+	function switchLabel(e){
+		var label = e.children[0];
+		var tableBlock = document.getElementById('settings-table-block');
+		var itemBlock = document.getElementById('settings-item-block');
+		if(label.innerText == 'Таблица'){
+			tableBlock.style.display = 'none';
+			itemBlock.style.display = 'block';
+			label.innerHTML = 'Элементы';
+		} else {
+			tableBlock.style.display = 'block';
+			itemBlock.style.display = 'none';
+			label.innerHTML = 'Таблица';
+		}
+	}
+	function switchCreatePlace(e){
+		var coords = document.getElementById('item-block-input-area').children[0];
+		coords.innerHTML = e.id;
+	}
 	generateTable();
 	generateMiniTable([3,3]);
-	generateItem([3,3,'owo','lightgreen']);
-	generateItem([3,2,'-w-','lightblue']);
-	generateItem([3,1,'uwu','pink']);
+	generateItem(['2;2','by prismatic_','lightgreen'],true);
+	generateMiniItem(['2;2','Элемент','lightblue']);
 </script>
 </html>
