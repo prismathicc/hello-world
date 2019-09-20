@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>table v1.0</title>
 	<style type="text/css">
-		@import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
+		@import url('https://fonts.googleapis.com/css?family=Montserrat:500,700,900&display=swap');
 		*{
 			box-sizing: border-box;
 		}
@@ -14,12 +14,147 @@
 			margin: 0;
 			padding: 0;
 			user-select: none;
-			font-family: 'Roboto Mono';
+			font-family: 'Montserrat';
 			font-size: 3vh;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			overflow: hidden;
+		}
+		#settings-display{
+			width: 0%;
+			opacity: 0;
+			transition: all .5s ease;
+			border-right: 2px solid rgba(0,0,0,.2);
+		}
+		#settings-main-block{
+			width: 100%;
+			height: 75vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+		}
+		#settings-main-block-label{
+			cursor: pointer;
+			color: rgba(0,0,0,.5);
+			height: 20%;
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: all .25s ease;
+		}
+		#settings-main-block-label:after{
+			content: '>';
+			margin-left: 5px;
+			opacity: 0;
+			transition: all .25s ease;
+		}
+		#settings-main-block-label:before{
+			content: '<';
+			margin-right: 5px;
+			opacity: 0;
+			transition: all .25s ease;
+		}
+		#settings-main-block-label:hover::after{
+			opacity: 1;
+			margin-left: 15px;
+		}
+		#settings-main-block-label:hover::before{
+			opacity: 1;
+			margin-right: 15px;
+		}
+		#settings-table-block{
+			height: 80%;
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+		}
+		#table-block-input-area{
+			color: rgba(0,0,0,.65);
+			font-size: 15px;
+			height: 20%;
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		#tb-x,#tb-y{
+			margin-right: 3%;
+			margin-left: 3%;
+			width: 30%;
+			height: 50%;
+		}
+		.input{
+			transition: all .5s ease;
+			outline: none;
+			border-radius: 10px;
+			font-family: 'Montserrat';
+			text-align: center;
+			padding-left: 3px;
+			border: 0;
+			border: 2px solid transparent;
+		}
+		.input:focus{
+			border: 2px solid rgba(0,0,0,.2);
+		}
+		.input:focus::placeholder{
+			color: transparent;
+		}
+		.input[type=number]::-webkit-inner-spin-button,
+		.input[type=number]::-webkit-outer-spin-button {
+		    -webkit-appearance: none;
+		    margin: 0;
+		}
+		.button{
+			transition: all .25s ease;
+			outline: none;
+			border-radius: 10px;
+			font-family: 'Montserrat';
+			text-align: center;
+			border: 0;
+			border: 2px solid rgba(0,0,0,.2);
+			background: transparent;
+		}
+		.button:hover{
+			cursor: pointer;
+			background: rgba(0,0,0,.2);
+			border-color: transparent;
+			color: white;
+			transform: scale(1.3);
+		}
+		.button:active{
+			transform: scale(1.15);
+		}
+		#tb-c{
+			width: 50%;
+			height: 50%;
+		}
+		#table-block-preview-area{
+			color: rgba(0,0,0,.5);
+			font-size: 15px;
+			height: 60%;
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		#table-block-button-area{
+			width: 100%;
+			height: 20%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		#main-display{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			flex-grow: 1;
 		}
 		#main{
 			width: 75%;
@@ -32,7 +167,6 @@
 			width: 100%;
 			height: 100%;
 			display: flex;
-			border: 2px solid gray;
 			box-sizing: border-box;
 		}
 		.column{
@@ -40,37 +174,30 @@
 			height: 100%;
 			display: flex;
 			flex-direction: column;
-			border-left: 2px solid gray;
-			border-right: 2px solid gray;
 			box-sizing: border-box;
+			margin-left: 2px;
 		}
 		.cell{
 			width: 100%;
 			height: 1px;
-			border-top: 2px solid gray;
-			border-bottom: 2px solid gray;
 			box-sizing: border-box;
 			display: flex;
 			justify-content: center;
 			align-items: center;
-		}
-		.cell-highlight{
-			width: 100%;
-			height: 100%;
-			border: 8px solid gray;
-			display: none;
-			transition: all .5s ease;
-			background: transparent;
+			border-radius: 3px;
+			border: 2px solid rgba(0,0,0,.2);
+			margin-top: 2px;
+			padding: 3px;
 		}
 		.item{
 			width: 100%;
 			height: 100%;
-			font-size:;
 			overflow-y: auto;
 			overflow-x: auto;
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			border-radius: 3px;
 		}
 		#add-item{
 			position: absolute;
@@ -90,77 +217,114 @@
 		}
 		#info{
 			position: absolute;
-			top: 3%;
-			right: 3%;
+			bottom: 5%;
+			left: 5%;
 			font-size: 15px;
 			display: flex;
 			opacity: .5;
 		}
-		#add-item:hover{
-			opacity: 1;
-		}
-		#add-table:hover{
-			opacity: 1;
-		}
-		input{
-			outline: none;
-			font-family: 'Roboto Mono';
-			border: 0;
-			border-bottom: 2px solid gray;
-			margin-right: 10px;
-		}
-		#button:hover{
-			cursor: pointer;
-			text-decoration: underline;
-		}
-		#remove{
+		.uibutton{
 			position: absolute;
-			top: 3%;
-			left: 3%;
-			opacity: .5;
-			width: 20vw;
-			height: 13vh;
+			transition: all .5s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			width: calc(3vh + 2vw);
+			height: calc(3vh + 2vw);
 		}
-		#remove:after{
-			content: '(drag)';
-			opacity: .5;
+		#settings-block{
+			top: 7%;
+			left: 5%;
 		}
-		#remove:hover{
-			color: red;
+		#remove-block{
+			top: 7%;
+			right: 5%;
+		}
+		.uiicon{
+			width: 100%;
+			height: 100%;
+			transition: all .5s ease;
+		}
+		.uilabel{
+			opacity: 0;
+			transition: all .5s ease;
+			font-size: 15px;
+			color: rgba(0,0,0,.5);
+		}
+		.uibutton:hover{
+			transform: scale(1.25);
+			cursor: pointer;
+		}
+		#settings-block:hover > #settings-label{
+			display: block;
 			opacity: 1;
+		}
+		#settings-block:hover > #settings-icon{
+			transform: rotate(180deg);
+		}
+		#remove-block:hover > #remove-label{
+			display: block;
+			opacity: 1;
+			color: red;
+		}
+		.mini-table{
+			width: 75%;
+			height: 75%;
+			display: flex;
+		}
+		.mini-column{
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			box-sizing: border-box;
+			margin-left: 1px;
+		}
+		.mini-cell{
+			width: 100%;
+			box-sizing: border-box;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 3px;
+			margin-top: 1px;
+			background: rgba(0,0,0,.1);
 		}
 	</style>
 </head>
 <body onmouseup="put()" onmousemove="move(window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)">
-	<div id="main">
-		<div id="table-wrap">
-			<!--<div class="column">
-				<div class="cell imanitem" onmousemove="preview(this)">
-					<div id="imanitem" class="item" onmousedown='pick(this)' onmouseup="put(this)">im an item</div>
+	<div id="settings-display">
+		<div id="settings-main-block">
+			<div id="settings-main-block-label">Таблица</div>
+			<div id="settings-table-block">
+				<div id="table-block-input-area">
+					<input type="number" id="tb-x" placeholder="Ш" class="input" oninput="generateMiniTable([eval(this.value),eval(this.parentElement.children[1].value)])" max="56" maxlength="2">на
+					<input type="number" id="tb-y" placeholder="В" class="input" oninput="generateMiniTable([eval(this.parentElement.children[0].value),eval(this.value)])" max="56" maxlength="2">
 				</div>
-				<div class="cell" onmousemove="preview(this)"></div>
+				<div id="table-block-preview-area">
+					
+				</div>
+				<div id="table-block-button-area">
+					<button class="button" id="tb-c" onclick="generateTable()">Создать</button>
+				</div>
 			</div>
-			<div class="column">
-				<div class="cell" onmousemove="preview(this)"></div>
-				<div class="cell imananotheritem" onmousemove="preview(this)">
-					<div id="imananotheritem" class="item" onmousedown='pick(this)' onmouseup="put(this)">im an another item</div>
-				</div>
-
-			</div>-->
 		</div>
-		<div id="add-item">
-			<input type="text" placeholder="x;y;txt;color">
-			<div id="button" onclick="generateItem(this.parentElement.children[0].value.split(';'))">create item</div>
-		</div>
-		<div id="add-table">
-			<input type="text" placeholder="x;y">
-			<div id="button" onclick="generateTable(this.parentElement.children[0].value.split(';'))">create table</div>
-		</div>
-		<div id="remove" onmouseup="removeItem(this)">
-			REMOVE ELEMENT
-		</div>
-		<div id="info">
-			x:,y:
+	</div>
+	<div id="main-display">
+		<div id="main">
+			<div id="table-wrap">
+			</div>
+			<div class="uibutton" id="remove-block" onmouseup="removeItem(this)">
+				<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/delete-trash.png" id="remove-icon">
+				<div class="uilabel" id="remove-label">Удалить</div>
+			</div>
+			<div class="uibutton" id="settings-block" onclick="switchSideDisplay()">
+				<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/settings.png" id="settings-icon">
+				<div class="uilabel" id="settings-label">Параметры</div>
+			</div>
+			<div id="info">
+				coordinates
+			</div>
 		</div>
 	</div>
 </body>
@@ -170,6 +334,7 @@
 	var opponent;
 	var opponentFirstParent;
 	var highlighted;
+	var miniTableData = [3,3];
 	function pick(e,w,h,mx,my){
 		e.style.transform = 'scale(0.75)';
 		e.style.opacity = .7;
@@ -181,7 +346,7 @@
 		e.style.transition = '';
 		e.style.top = my/h*100+'%';
 		e.style.left = mx/w*100+'%';
-		var highlight = e.parentElement.firstChild;
+		var highlight = e.parentElement;
 		if(pickedId !== ''){
 			if(e !== highlighted && highlighted !== undefined){
 				highlighted.firstChild.style.display = 'none';
@@ -203,17 +368,15 @@
 	}
 	function preview(e){
 		var item = document.getElementById(pickedId);
-		var secondItem = e.children[1];
+		var secondItem = e.children[0];
 		var cells = document.getElementsByClassName('cell');
 		var info = document.getElementById('info');
-		var highlight = e.firstChild;
 		if(pickedId !== ''){
 			if(e !== highlighted && highlighted !== undefined){
-				highlighted.firstChild.style.display = 'none';
+				highlighted.style.borderColor = 'rgba(0,0,0,.2)';
 			}
 			highlighted = e;
-			highlight.style.display = 'block';
-			highlight.style.borderColor = item.style.backgroundColor;
+			e.style.borderColor = item.style.backgroundColor;
 		}
 		info.innerHTML = e.id;
 		if(e.classList.length == 1 && pickedId !== ''){
@@ -259,7 +422,7 @@
 			item.style.transition = 'all .1s ease';
 			pickedId = '';
 			firstParent = undefined;
-			highlighted.firstChild.style.display = 'none';
+			highlighted.style.borderColor = 'rgba(0,0,0,.2)';
 			highlighted = undefined;
 			opponent = undefined;
 			opponentFirstParent = undefined;
@@ -270,12 +433,8 @@
 			document.getElementById('table-wrap').remove();
 			var tableWrap = document.createElement('div');
 			tableWrap.id = 'table-wrap';
-			tableWrap.style.width = '100%';
-			tableWrap.style.height = '100%';
-			tableWrap.style.display = 'flex';
-			tableWrap.style.border = '2px solid gray';
-			tableWrap.style.boxSizing = 'border-box';
 			main.appendChild(tableWrap);
+			var data = miniTableData;
 			for(var i=0;i<data[0];i++){
 				var newcolumn = document.createElement('div');
 				newcolumn.classList.add('column');
@@ -285,45 +444,86 @@
 			for(var i=0;i<tableWrap.children.length;i++){
 				for(var j=0;j<data[1];j++){
 					var newCell = document.createElement('div');
-					var newCellHL = document.createElement('div');
 					newCell.classList.add('cell');
 					newCell.onmousemove = function(){preview(this)};
 					newCell.style.height = 100/data[1]+'%';
-					newCell.id = 'x: '+(i+1)+',y: '+(j+1)
-					newCellHL.classList.add('cell-highlight');
-					newCell.appendChild(newCellHL);
+					newCell.id = 'x: '+(i+1)+', y: '+(j+1)
 					tableWrap.children[i].appendChild(newCell);
 				}
 			}
 	}
+	function generateMiniTable(data){
+		var container = document.getElementById('table-block-preview-area');
+		if(eval(data[0]) > 40 || eval(data[1]) > 40){
+			container.innerHTML = 'Превышен лимит размера!'
+		} else {
+			miniTableData = data;
+			if(document.getElementsByClassName('mini-table')[0] !== undefined){
+				document.getElementsByClassName('mini-table')[0].remove();
+			}
+			container.innerHTML = '';
+			var tableWrap = document.createElement('div');
+			tableWrap.classList.add('mini-table');
+			container.appendChild(tableWrap);
+			for(var i=0;i<data[0];i++){
+					var newcolumn = document.createElement('div');
+					newcolumn.classList.add('mini-column');
+					newcolumn.style.width = 100/data[0]+'%';
+					tableWrap.appendChild(newcolumn);
+				}
+			for(var i=0;i<tableWrap.children.length;i++){
+				for(var j=0;j<data[1];j++){
+					var newCell = document.createElement('div');
+					var newCellHL = document.createElement('div');
+					newCell.classList.add('mini-cell');
+					newCell.onmousemove = function(){preview(this)};
+					newCell.style.height = 100/data[1]+'%';
+					newCell.id = 'x: '+(i+1)+', y: '+(j+1)
+					newCell.appendChild(newCellHL);
+					tableWrap.children[i].appendChild(newCell);
+				}
+			}
+		}
+	}
 	function generateItem(data){
-		var tableWrap = document.getElementById('table-wrap');
-		var items = document.getElementsByClassName('item');
-		var newItem = document.createElement('div');
-		var admiss;
-		newItem.classList.add('item');
-		newItem.onmousedown = function(){pick(this,window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)};
-		newItem.innerHTML = data[2];
-		newItem.style.backgroundColor = data[3];
-		if(tableWrap.children[data[0]-1].children[data[1]-1].children.length == 1){
-			tableWrap.children[data[0]-1].children[data[1]-1].appendChild(newItem);
-			admiss = true;
-		}
-		newItem.id = items.length;
-		if(admiss){
-			tableWrap.children[data[0]-1].children[data[1]-1].classList.add(newItem.id);
-		}
+			var tableWrap = document.getElementById('table-wrap');
+			var items = document.getElementsByClassName('item');
+			var newItem = document.createElement('div');
+			var admiss;
+			newItem.classList.add('item');
+			newItem.onmousedown = function(){pick(this,window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)};
+			newItem.innerHTML = data[2];
+			newItem.style.backgroundColor = data[3];
+			if(tableWrap.children[data[0]-1].children[data[1]-1].children.length == 0){
+				tableWrap.children[data[0]-1].children[data[1]-1].appendChild(newItem);
+				admiss = true;
+			}
+			newItem.id = items.length;
+			if(admiss){
+				tableWrap.children[data[0]-1].children[data[1]-1].classList.add(newItem.id);
+			}
 	}
 	function removeItem(){
 		if(pickedId !== ''){
 			document.getElementById(pickedId).parentElement.classList.remove(pickedId);
 			document.getElementById(pickedId).remove();
 			pickedId = '';
-			highlighted.firstChild.style.display = 'none';
+			highlighted.style.borderColor = 'rgba(0,0,0,.2)';
 			highlighted = undefined;
 		}
 	}
-	generateTable([3,3]);
+	function switchSideDisplay(){
+		var display = document.getElementById('settings-display');
+		if(display.style.opacity == 0){
+			display.style.opacity = 1;
+			display.style.width = '30%';
+		} else {
+			display.style.opacity = 0;
+			display.style.width = '0%';
+		}
+	}
+	generateTable();
+	generateMiniTable([3,3]);
 	generateItem([3,3,'owo','lightgreen']);
 	generateItem([3,2,'-w-','lightblue']);
 	generateItem([3,1,'uwu','pink']);
