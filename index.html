@@ -249,7 +249,7 @@
 		#info{
 			position: absolute;
 			bottom: 5%;
-			left: 5%;
+			right: 5%;
 			font-size: 15px;
 			display: flex;
 			opacity: .5;
@@ -372,7 +372,6 @@
 				<div class="uilabel" id="settings-label">Параметры</div>
 			</div>
 			<div id="info">
-				coordinates
 			</div>
 		</div>
 	</div>
@@ -428,7 +427,7 @@
 			highlighted = e;
 			e.style.borderColor = item.style.backgroundColor;
 		}
-		info.innerHTML = e.id;
+		info.innerHTML = 'Клетка '+e.id;
 		if(e.classList.length == 1 && pickedId !== ''){
 			var cells = document.getElementsByClassName('cell');
 			e.classList.add(item.id);
