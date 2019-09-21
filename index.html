@@ -16,10 +16,17 @@
 			user-select: none;
 			font-family: 'Montserrat';
 			font-size: 3vh;
+			overflow: hidden;
+		}
+		#wrapper{
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			overflow: hidden;
 		}
 		#settings-display{
 			width: 0%;
@@ -321,57 +328,106 @@
 			margin-top: 1px;
 			background: rgba(0,0,0,.1);
 		}
+		#preloader-display{
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: white;
+			z-index: 1000;
+		}
+		#preloader{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		#preloader-img-block{
+			animation: rotate 1s infinite linear;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		#preloader-img{
+			width: calc(3vh + 2vw);
+			height: calc(3vh + 2vw);
+		}
+		#preloader-text{
+			margin-left: 20px;
+			font-weight: bold;
+		}
+		@keyframes rotate{
+			from{transform: rotate(0deg)}
+			to{transform: rotate(360deg)}
+		}
+		@keyframes fade{
+			from{opacity: 1}
+			to{opacity: 0}
+		}
 	</style>
 </head>
 <body onmouseup="put()" onmousemove="move(window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)">
-	<div id="settings-display">
-		<div id="settings-main-block">
-			<div id="settings-main-block-label" onclick="switchLabel(this)">
-				<div>
-					Таблица
-				</div>
+	<div id="preloader-display">
+		<div id="preloader">
+			<div id="preloader-img-block">
+				<img src="https://image.flaticon.com/icons/svg/60/60961.svg" id="preloader-img">
 			</div>
-			<div id="settings-table-block">
-				<div id="table-block-input-area">
-					<input type="number" id="tb-x" placeholder="Ш" class="input" oninput="generateMiniTable([eval(this.value),eval(this.parentElement.children[1].value)])" max="56" maxlength="2">на
-					<input type="number" id="tb-y" placeholder="В" class="input" oninput="generateMiniTable([eval(this.parentElement.children[0].value),eval(this.value)])" max="56" maxlength="2">
+			<div id="preloader-text">by prismatic_</div>
+		</div>
+	</div>
+	<div id="wrapper">
+		<div id="settings-display">
+			<div id="settings-main-block">
+				<div id="settings-main-block-label" onclick="switchLabel(this)">
+					<div>
+						Таблица
+					</div>
 				</div>
-				<div id="table-block-preview-area">
-					
+				<div id="settings-table-block">
+					<div id="table-block-input-area">
+						<input type="number" id="tb-x" placeholder="Ш" class="input" oninput="generateMiniTable([eval(this.value),eval(this.parentElement.children[1].value)])" max="56" maxlength="2">на
+						<input type="number" id="tb-y" placeholder="В" class="input" oninput="generateMiniTable([eval(this.parentElement.children[0].value),eval(this.value)])" max="56" maxlength="2">
+					</div>
+					<div id="table-block-preview-area">
+						
+					</div>
+					<div id="table-block-button-area">
+						<button class="button" id="tb-c" onclick="generateTable()">Создать</button>
+					</div>
 				</div>
-				<div id="table-block-button-area">
-					<button class="button" id="tb-c" onclick="generateTable()">Создать</button>
-				</div>
-			</div>
-			<div id="settings-item-block" style="display: none">
-				<div id="item-block-input-area">
-					<div id="ib-place">0;0</div>
-					<input type="text" id="ib-text" class="input" placeholder="Текст" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.value,this.parentElement.children[2].value])">
-					<input type="text" id="ib-color" class="input" placeholder="Цвет" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.parentElement.children[1].value,this.value])">
-				</div>
-				<div id="item-block-preview-area">
-					
-				</div>
-				<div id="item-block-button-area">
-					<button class="button" id="ib-r" onclick="generateItem()">Заменить</button>
-					<div>ЛКМ по клетке для выбора.</div>
+				<div id="settings-item-block" style="display: none">
+					<div id="item-block-input-area">
+						<div id="ib-place">0;0</div>
+						<input type="text" id="ib-text" class="input" placeholder="Текст" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.value,this.parentElement.children[2].value])">
+						<input type="text" id="ib-color" class="input" placeholder="Цвет" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.parentElement.children[1].value,this.value])">
+					</div>
+					<div id="item-block-preview-area">
+						
+					</div>
+					<div id="item-block-button-area">
+						<button class="button" id="ib-r" onclick="generateItem()">Заменить</button>
+						<div>ЛКМ по клетке для выбора.</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div id="main-display">
-		<div id="main">
-			<div id="table-wrap">
-			</div>
-			<div class="uibutton" id="remove-block" onmouseup="removeItem(this)">
-				<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/delete-trash.png" id="remove-icon">
-				<div class="uilabel" id="remove-label">Удалить</div>
-			</div>
-			<div class="uibutton" id="settings-block" onclick="switchSideDisplay()">
-				<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/settings.png" id="settings-icon">
-				<div class="uilabel" id="settings-label">Параметры</div>
-			</div>
-			<div id="info">
+		<div id="main-display">
+			<div id="main">
+				<div id="table-wrap">
+				</div>
+				<div class="uibutton" id="remove-block" onmouseup="removeItem(this)">
+					<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/delete-trash.png" id="remove-icon">
+					<div class="uilabel" id="remove-label">Удалить</div>
+				</div>
+				<div class="uibutton" id="settings-block" onclick="switchSideDisplay()">
+					<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/settings.png" id="settings-icon">
+					<div class="uilabel" id="settings-label">Параметры</div>
+				</div>
+				<div id="info">
+				</div>
 			</div>
 		</div>
 	</div>
@@ -401,8 +457,7 @@
 				highlighted.firstChild.style.display = 'none';
 			}
 			highlighted = e.parentElement;
-			highlight.style.display = 'block';
-			highlight.style.borderColor = e.style.backgroundColor;
+			highlighted.style.borderColor = 'black';
 		}
 	}
 	function move(w,h,mx,my,target){
@@ -425,7 +480,7 @@
 				highlighted.style.borderColor = 'rgba(0,0,0,.2)';
 			}
 			highlighted = e;
-			e.style.borderColor = item.style.backgroundColor;
+			e.style.borderColor = 'black';
 		}
 		info.innerHTML = 'Клетка '+e.id;
 		if(e.classList.length == 1 && pickedId !== ''){
@@ -621,7 +676,16 @@
 	}
 	generateTable();
 	generateMiniTable([3,3]);
-	generateItem(['2;2','by prismatic_','lightgreen'],true);
 	generateMiniItem(['2;2','Элемент','lightblue']);
+
+	document.body.onload = function(){
+		var preloader = document.getElementById('preloader-display');
+		setTimeout(function(){
+			preloader.style.animation = 'fade 2s 1 ease';
+			setTimeout(function(){
+				preloader.style.display = 'none';
+			},2000)
+		},1000)
+	}
 </script>
 </html>
