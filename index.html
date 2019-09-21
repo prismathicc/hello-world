@@ -29,10 +29,20 @@
 			align-items: center;
 		}
 		#settings-display{
-			width: 0%;
+			background: white;
+			position: absolute;
+			top: 0;
+			left: -100%;
+			width: 400px;
+			height: 100vh;
 			opacity: 0;
 			transition: all .5s ease;
 			border-right: 2px solid rgba(0,0,0,.2);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+			z-index: 500;
 		}
 		#settings-main-block{
 			width: 100%;
@@ -181,6 +191,7 @@
 			align-items: center;
 			height: 100%;
 			flex-grow: 1;
+			transition: all .5s ease;
 		}
 		#main{
 			width: 75%;
@@ -270,6 +281,7 @@
 			flex-direction: column;
 			width: calc(3vh + 2vw);
 			height: calc(3vh + 2vw);
+			z-index: 750;
 		}
 		#settings-block{
 			top: 7%;
@@ -396,11 +408,12 @@
 					</div>
 					<div id="table-block-button-area">
 						<button class="button" id="tb-c" onclick="generateTable()">Создать</button>
+						<div>ЛКМ по клетке для выбора.</div>
 					</div>
 				</div>
 				<div id="settings-item-block" style="display: none">
 					<div id="item-block-input-area">
-						<div id="ib-place">0;0</div>
+						<div id="ib-place" onclick="switchLabel()">0;0</div>
 						<input type="text" id="ib-text" class="input" placeholder="Текст" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.value,this.parentElement.children[2].value])">
 						<input type="text" id="ib-color" class="input" placeholder="Цвет" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.parentElement.children[1].value,this.value])">
 					</div>
@@ -409,7 +422,7 @@
 					</div>
 					<div id="item-block-button-area">
 						<button class="button" id="ib-r" onclick="generateItem()">Заменить</button>
-						<div>ЛКМ по клетке для выбора.</div>
+						<div>ЛКМ по координатам для выбора.</div>
 					</div>
 				</div>
 			</div>
@@ -418,17 +431,17 @@
 			<div id="main">
 				<div id="table-wrap">
 				</div>
-				<div class="uibutton" id="remove-block" onmouseup="removeItem(this)">
-					<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/delete-trash.png" id="remove-icon">
-					<div class="uilabel" id="remove-label">Удалить</div>
-				</div>
-				<div class="uibutton" id="settings-block" onclick="switchSideDisplay()">
-					<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/settings.png" id="settings-icon">
-					<div class="uilabel" id="settings-label">Параметры</div>
-				</div>
-				<div id="info">
-				</div>
 			</div>
+		</div>
+		<div class="uibutton" id="remove-block" onmouseup="removeItem(this)">
+			<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/delete-trash.png" id="remove-icon">
+			<div class="uilabel" id="remove-label">Удалить</div>
+		</div>
+		<div class="uibutton" id="settings-block" onclick="switchSideDisplay()">
+			<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/settings.png" id="settings-icon">
+			<div class="uilabel" id="settings-label">Параметры</div>
+		</div>
+		<div id="info">
 		</div>
 	</div>
 </body>
@@ -550,7 +563,7 @@
 					var newCell = document.createElement('div');
 					newCell.classList.add('cell');
 					newCell.onmousemove = function(){preview(this)};
-					newCell.onmousedown = function(){switchCreatePlace(this)};
+					newCell.onmousedown = function(){hideSideDisplay()};
 					newCell.style.height = 100/data[1]+'%';
 					newCell.id = (i+1)+';'+(j+1)
 					tableWrap.children[i].appendChild(newCell);
@@ -581,8 +594,8 @@
 					var newCell = document.createElement('div');
 					var newCellHL = document.createElement('div');
 					newCell.classList.add('mini-cell');
-					newCell.onmousemove = function(){preview(this)};
-					newCell.onmousedown = function(){turnToPlace(this)};
+					newCell.id = 'm'+(i+1)+';'+(j+1);
+					newCell.onmousedown = function(){switchCreatePlace(this);switchLabel();generateMiniItem(this)};
 					newCell.style.height = 100/data[1]+'%';
 					newCell.appendChild(newCellHL);
 					tableWrap.children[i].appendChild(newCell);
@@ -621,12 +634,25 @@
 			cell.appendChild(newItem);
 		}
 	}
-	function generateMiniItem(data){
+	function generateMiniItem(e){
 		var container = document.getElementById('item-block-preview-area');
+		var previousMiniItem = document.getElementsByClassName('mini-item')[0];
+		if(previousMiniItem !== undefined){
+			previousMiniItem.remove();
+		}
+		var takedCell = document.getElementById(e.id.substring(1,e.id.length)).children[0];
+		var takedCellText,takedCellBG;
+		if(takedCell == undefined){
+			takedCellText = 'Пустой элемент';
+			takedCellBG = 'white';
+		} else {
+			takedCellText = takedCell.innerText;
+			takedCellBG = takedCell.style.backgroundColor;
+		}
 		var newItem = document.createElement('div');
 		newItem.classList.add('mini-item');
-		newItem.innerHTML = data[1];
-		newItem.style.backgroundColor = data[2];
+		newItem.innerHTML = takedCellText;
+		newItem.style.backgroundColor = takedCellBG;
 		container.appendChild(newItem);
 	}
 	function changeMiniItem(data){
@@ -647,16 +673,26 @@
 	}
 	function switchSideDisplay(){
 		var display = document.getElementById('settings-display');
+		var mainDisplay = document.getElementById('main-display');
 		if(display.style.opacity == 0){
 			display.style.opacity = 1;
-			display.style.width = '30%';
+			display.style.left = '0%';
+			mainDisplay.style.opacity = .5;
 		} else {
 			display.style.opacity = 0;
-			display.style.width = '0%';
+			display.style.left = '-100%';
+			mainDisplay.style.opacity = 1;
 		}
 	}
-	function switchLabel(e){
-		var label = e.children[0];
+	function hideSideDisplay(){
+		var display = document.getElementById('settings-display');
+		var mainDisplay = document.getElementById('main-display');
+		display.style.opacity = 0;
+		display.style.left = '-100%';
+		mainDisplay.style.opacity = 1;
+	}
+	function switchLabel(){
+		var label = document.getElementById('settings-main-block-label').children[0];
 		var tableBlock = document.getElementById('settings-table-block');
 		var itemBlock = document.getElementById('settings-item-block');
 		if(label.innerText == 'Таблица'){
@@ -671,12 +707,12 @@
 	}
 	function switchCreatePlace(e){
 		var coords = document.getElementById('item-block-input-area').children[0];
-		coords.innerHTML = e.id;
-		miniItemData[0] = e.id;
+		coords.innerHTML = e.id.substring(1,e.id.length);
+		miniItemData[0] = e.id.substring(1,e.id.length);
 	}
 	generateTable();
 	generateMiniTable([3,3]);
-	generateMiniItem(['2;2','Элемент','lightblue']);
+	generateMiniItem(document.getElementById('m1;1'));
 
 	document.body.onload = function(){
 		var preloader = document.getElementById('preloader-display');
