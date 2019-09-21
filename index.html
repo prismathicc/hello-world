@@ -5,9 +5,6 @@
 	<title>table by prismatic_</title>
 	<style type="text/css">
 		@import url('https://fonts.googleapis.com/css?family=Montserrat:500,700,900&display=swap');
-		*{
-			box-sizing: border-box;
-		}
 		body{
 			width: 100vw;
 			height: 100vh;
@@ -16,7 +13,7 @@
 			user-select: none;
 			font-family: 'Montserrat';
 			font-size: 3vh;
-			overflow: hidden;
+			overflow-x: hidden;
 		}
 		#wrapper{
 			position: absolute;
@@ -24,13 +21,10 @@
 			left: 0;
 			width: 100vw;
 			height: 100vh;
-			display: flex;
-			justify-content: center;
-			align-items: center;
 		}
 		#settings-display{
 			background: white;
-			position: absolute;
+			position: fixed;
 			top: 0;
 			left: -100%;
 			width: 400px;
@@ -46,7 +40,7 @@
 		}
 		#settings-main-block{
 			width: 100%;
-			height: 75vh;
+			height: 85vh;
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -102,7 +96,7 @@
 		#tb-x,#tb-y{
 			margin-right: 3%;
 			margin-left: 3%;
-			width: 30%;
+			width: 20%;
 			height: 50%;
 		}
 		#ib-place,#ib-text,#ib-color{
@@ -186,29 +180,22 @@
 			color: rgba(0,0,0,.5);
 		}
 		#main-display{
+			width: 100%;
+			transition: all .5s ease;
 			display: flex;
 			justify-content: center;
-			align-items: center;
-			height: 100%;
-			flex-grow: 1;
-			transition: all .5s ease;
+			padding-top: 20vh;
 		}
 		#main{
-			width: 75%;
-			height: 75%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
+			width: 65%;
 		}
 		#table-wrap{
 			width: 100%;
-			height: 100%;
 			display: flex;
 			box-sizing: border-box;
 		}
 		.column{
 			width: 1px;
-			height: 100%;
 			display: flex;
 			flex-direction: column;
 			box-sizing: border-box;
@@ -216,7 +203,7 @@
 		}
 		.cell{
 			width: 100%;
-			height: 1px;
+			height: 150px;
 			box-sizing: border-box;
 			display: flex;
 			justify-content: center;
@@ -265,32 +252,31 @@
 			display: flex;
 			opacity: .5;
 		}
-		#info{
-			position: absolute;
-			bottom: 5%;
-			right: 5%;
-			font-size: 15px;
-			display: flex;
-			opacity: .5;
-		}
 		.uibutton{
-			position: absolute;
+			position: fixed;
 			transition: all .5s ease;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			flex-direction: column;
-			width: calc(3vh + 2vw);
-			height: calc(3vh + 2vw);
+			width: 40px;
+			height: 40px;
 			z-index: 750;
 		}
 		#settings-block{
-			top: 7%;
-			left: 5%;
+			top: calc(3vw + 3vh);
+			left: calc(3vw + 3vh);
 		}
 		#remove-block{
-			top: 7%;
-			right: 5%;
+			top: calc(3vw + 3vh);
+			right: calc(3vw + 3vh);
+		}
+		#view-block{
+			top: calc(3vw + 3vh);
+			left: calc(8vw + 8vh);
+		}
+		#view-block{
+			z-index: 499;
 		}
 		.uiicon{
 			width: 100%;
@@ -319,6 +305,10 @@
 			opacity: 1;
 			color: red;
 		}
+		#view-block:hover > #view-label{
+			display: block;
+			opacity: 1;
+		}
 		.mini-table{
 			width: 75%;
 			height: 75%;
@@ -342,7 +332,7 @@
 			background: rgba(0,0,0,.1);
 		}
 		#preloader-display{
-			position: absolute;
+			position: fixed;
 			top: 0;
 			left: 0;
 			width: 100vw;
@@ -371,6 +361,24 @@
 		#preloader-text{
 			margin-left: 20px;
 			font-weight: bold;
+		}
+		#footer-display{
+			width: 100%;
+			height: 20vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		#footer-container{
+			width: 75%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		#footer-text{
+			color: rgba(0,0,0,.5);
+			font-size: 15px;
 		}
 		@keyframes rotate{
 			from{transform: rotate(0deg)}
@@ -442,7 +450,16 @@
 			<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/settings.png" id="settings-icon">
 			<div class="uilabel" id="settings-label">Параметры</div>
 		</div>
-		<div id="info">
+		<div id="footer-display">
+			<div id="footer-container">
+				<div id="footer-text">
+					"table" 2019
+				</div>
+			</div>
+		</div>
+		<div class="uibutton" id="view-block" onclick="switchSizeMode()">
+			<img src="https://img.icons8.com/material-outlined/96/000000/view-file.png" class="uiicon" id="view-icon">
+			<div class="uilabel" id="view-label">Полный</div>
 		</div>
 	</div>
 </body>
@@ -452,7 +469,8 @@
 	var opponent;
 	var opponentFirstParent;
 	var highlighted;
-	var miniTableData = [3,3];
+	var sizeMode = 'scroll';
+	var miniTableData = [3,5];
 	var miniItemData = ['2;2','Элемент','lightblue'];
 	function pick(e,w,h,mx,my){
 		e.style.transform = 'scale(0.75)';
@@ -488,7 +506,6 @@
 		var item = document.getElementById(pickedId);
 		var secondItem = e.children[0];
 		var cells = document.getElementsByClassName('cell');
-		var info = document.getElementById('info');
 		if(pickedId !== ''){
 			if(e !== highlighted && highlighted !== undefined){
 				highlighted.style.borderColor = 'rgba(0,0,0,.2)';
@@ -496,7 +513,6 @@
 			highlighted = e;
 			e.style.borderColor = 'black';
 		}
-		info.innerHTML = 'Клетка '+e.id;
 		if(e.classList.length == 1 && pickedId !== ''){
 			var cells = document.getElementsByClassName('cell');
 			e.classList.add(item.id);
@@ -566,7 +582,6 @@
 					newCell.onmousemove = function(){preview(this)};
 					newCell.onmousedown = function(){hideSideDisplay()};
 					newCell.oncontextmenu = function(){showSideDisplay();switchCreatePlace(this);itemLabel();generateMiniItem(this);event.preventDefault()}
-					newCell.style.height = 100/data[1]+'%';
 					newCell.id = (i+1)+';'+(j+1)
 					tableWrap.children[i].appendChild(newCell);
 				}
@@ -726,6 +741,37 @@
 		var coords = document.getElementById('item-block-input-area').children[0];
 		coords.innerHTML = e.id;
 		miniItemData[0] = e.id;
+	}
+	function switchSizeMode(){
+		var mainDisplay = document.getElementById('main-display');
+		var main = document.getElementById('main');
+		var tableWrap = document.getElementById('table-wrap');
+		var cells = document.getElementsByClassName('cells');
+		var viewLabel = document.getElementById('view-label');
+
+		if(sizeMode == 'scroll'){
+			mainDisplay.style.height = '100vh';
+			mainDisplay.style.padding = '0';
+			mainDisplay.style.alignItems = 'center';
+			main.style.height = '65%';
+			tableWrap.style.height = '100%';
+			for(var i=0;i<cells.length;i++){
+				cells.style.height = 100/miniTableData[1]+'%';
+			}
+			sizeMode = 'full-view'
+			viewLabel.innerHTML = 'Экранный';
+		} else {
+			mainDisplay.style.height = '';
+			mainDisplay.style.paddingTop = '20vh';
+			mainDisplay.style.alignItems = '';
+			main.style.height = '';
+			tableWrap.style.height = '';
+			for(var i=0;i<cells.length;i++){
+				cells.style.height = '150px';
+			}
+			sizeMode = 'scroll';
+			viewLabel.innerHTML = 'Полный';
+		}
 	}
 
 	generateTable();
