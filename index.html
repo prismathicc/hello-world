@@ -459,7 +459,7 @@
 		</div>
 		<div class="uibutton" id="view-block" onclick="switchSizeMode()">
 			<img src="https://img.icons8.com/material-outlined/96/000000/view-file.png" class="uiicon" id="view-icon">
-			<div class="uilabel" id="view-label">Полный</div>
+			<div class="uilabel" id="view-label">Вид</div>
 		</div>
 	</div>
 </body>
@@ -470,7 +470,7 @@
 	var opponentFirstParent;
 	var highlighted;
 	var sizeMode = 'scroll';
-	var miniTableData = [3,5];
+	var miniTableData = [2,2];
 	var miniItemData = ['2;2','Элемент','lightblue'];
 	function pick(e,w,h,mx,my){
 		e.style.transform = 'scale(0.75)';
@@ -746,7 +746,7 @@
 		var mainDisplay = document.getElementById('main-display');
 		var main = document.getElementById('main');
 		var tableWrap = document.getElementById('table-wrap');
-		var cells = document.getElementsByClassName('cells');
+		var cells = document.getElementsByClassName('cell');
 		var viewLabel = document.getElementById('view-label');
 
 		if(sizeMode == 'scroll'){
@@ -756,10 +756,9 @@
 			main.style.height = '65%';
 			tableWrap.style.height = '100%';
 			for(var i=0;i<cells.length;i++){
-				cells.style.height = 100/miniTableData[1]+'%';
+				cells[i].style.height = 100/miniTableData[1]+'%';
 			}
 			sizeMode = 'full-view'
-			viewLabel.innerHTML = 'Экранный';
 		} else {
 			mainDisplay.style.height = '';
 			mainDisplay.style.paddingTop = '20vh';
@@ -767,15 +766,14 @@
 			main.style.height = '';
 			tableWrap.style.height = '';
 			for(var i=0;i<cells.length;i++){
-				cells.style.height = '150px';
+				cells[i].style.height = '150px';
 			}
 			sizeMode = 'scroll';
-			viewLabel.innerHTML = 'Полный';
 		}
 	}
 
 	generateTable();
-	generateMiniTable([3,3]);
+	generateMiniTable([2,2]);
 	generateMiniItem(document.getElementById('1;1'));
 
 	document.body.onload = function(){
