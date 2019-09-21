@@ -408,12 +408,12 @@
 					</div>
 					<div id="table-block-button-area">
 						<button class="button" id="tb-c" onclick="generateTable()">Создать</button>
-						<div>ЛКМ по клетке для выбора.</div>
+						<div>Максимальный размер - 40 клеток.</div>
 					</div>
 				</div>
 				<div id="settings-item-block" style="display: none">
 					<div id="item-block-input-area">
-						<div id="ib-place" onclick="switchLabel()">0;0</div>
+						<div id="ib-place">0;0</div>
 						<input type="text" id="ib-text" class="input" placeholder="Текст" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.value,this.parentElement.children[2].value])">
 						<input type="text" id="ib-color" class="input" placeholder="Цвет" oninput="changeMiniItem([this.parentElement.children[0].innerText,this.parentElement.children[1].value,this.value])">
 					</div>
@@ -422,7 +422,7 @@
 					</div>
 					<div id="item-block-button-area">
 						<button class="button" id="ib-r" onclick="generateItem()">Заменить</button>
-						<div>ЛКМ по координатам для выбора.</div>
+						<div>ПКМ по клетке для выбора.</div>
 					</div>
 				</div>
 			</div>
@@ -564,6 +564,7 @@
 					newCell.classList.add('cell');
 					newCell.onmousemove = function(){preview(this)};
 					newCell.onmousedown = function(){hideSideDisplay()};
+					newCell.oncontextmenu = function(){showSideDisplay();switchCreatePlace(this);itemLabel();generateMiniItem(this);event.preventDefault()}
 					newCell.style.height = 100/data[1]+'%';
 					newCell.id = (i+1)+';'+(j+1)
 					tableWrap.children[i].appendChild(newCell);
@@ -595,7 +596,6 @@
 					var newCellHL = document.createElement('div');
 					newCell.classList.add('mini-cell');
 					newCell.id = 'm'+(i+1)+';'+(j+1);
-					newCell.onmousedown = function(){switchCreatePlace(this);switchLabel();generateMiniItem(this)};
 					newCell.style.height = 100/data[1]+'%';
 					newCell.appendChild(newCellHL);
 					tableWrap.children[i].appendChild(newCell);
@@ -622,7 +622,8 @@
 		} else {
 			var cell = document.getElementById(miniItemData[0]);
 			newItem.classList.add('item');
-			newItem.onmousedown = function(){pick(this,window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target)};
+			newItem.onmousedown = function(){pick(this,window.innerWidth,window.innerHeight,event.clientX,event.clientY,event.target);generateMiniItem(this.parentElement);hideSideDisplay();hideSideDisplay()};
+			newItem.oncontextmenu = function(){showSideDisplay();switchCreatePlace(this.parentElement);itemLabel();generateMiniItem(this.parentElement);event.preventDefault();put()}
 			newItem.innerHTML = miniItemData[1];
 			newItem.style.backgroundColor = miniItemData[2];
 			newItem.id = items.length;
@@ -640,7 +641,7 @@
 		if(previousMiniItem !== undefined){
 			previousMiniItem.remove();
 		}
-		var takedCell = document.getElementById(e.id.substring(1,e.id.length)).children[0];
+		var takedCell = document.getElementById(e.id).children[0];
 		var takedCellText,takedCellBG;
 		if(takedCell == undefined){
 			takedCellText = 'Пустой элемент';
@@ -691,6 +692,13 @@
 		display.style.left = '-100%';
 		mainDisplay.style.opacity = 1;
 	}
+	function showSideDisplay(){
+		var display = document.getElementById('settings-display');
+		var mainDisplay = document.getElementById('main-display');
+		display.style.opacity = 1;
+		display.style.left = '0%';
+		mainDisplay.style.opacity = .5;
+	}
 	function switchLabel(){
 		var label = document.getElementById('settings-main-block-label').children[0];
 		var tableBlock = document.getElementById('settings-table-block');
@@ -705,14 +713,23 @@
 			label.innerHTML = 'Таблица';
 		}
 	}
+	function itemLabel(){
+		var label = document.getElementById('settings-main-block-label').children[0];
+		var tableBlock = document.getElementById('settings-table-block');
+		var itemBlock = document.getElementById('settings-item-block');
+		tableBlock.style.display = 'none';
+		itemBlock.style.display = 'block';
+		label.innerHTML = 'Элементы';
+	}
 	function switchCreatePlace(e){
 		var coords = document.getElementById('item-block-input-area').children[0];
-		coords.innerHTML = e.id.substring(1,e.id.length);
-		miniItemData[0] = e.id.substring(1,e.id.length);
+		coords.innerHTML = e.id;
+		miniItemData[0] = e.id;
 	}
+
 	generateTable();
 	generateMiniTable([3,3]);
-	generateMiniItem(document.getElementById('m1;1'));
+	generateMiniItem(document.getElementById('1;1'));
 
 	document.body.onload = function(){
 		var preloader = document.getElementById('preloader-display');
