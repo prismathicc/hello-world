@@ -362,24 +362,6 @@
 			margin-left: 20px;
 			font-weight: bold;
 		}
-		#footer-display{
-			width: 100%;
-			height: 20vh;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		#footer-container{
-			width: 75%;
-			height: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		#footer-text{
-			color: rgba(0,0,0,.5);
-			font-size: 15px;
-		}
 		@keyframes rotate{
 			from{transform: rotate(0deg)}
 			to{transform: rotate(360deg)}
@@ -450,13 +432,6 @@
 			<img class="uiicon" src="https://img.icons8.com/material-outlined/100/000000/settings.png" id="settings-icon">
 			<div class="uilabel" id="settings-label">Параметры</div>
 		</div>
-		<div id="footer-display">
-			<div id="footer-container">
-				<div id="footer-text">
-					"table" 2019
-				</div>
-			</div>
-		</div>
 		<div class="uibutton" id="view-block" onclick="switchSizeMode()">
 			<img src="https://img.icons8.com/material-outlined/96/000000/view-file.png" class="uiicon" id="view-icon">
 			<div class="uilabel" id="view-label">Вид</div>
@@ -473,13 +448,15 @@
 	var miniTableData = [2,2];
 	var miniItemData = ['2;2','Элемент','lightblue'];
 	function pick(e,w,h,mx,my){
+		var width = e.offsetWidth;
+		var height = e.offsetHeight;
 		e.style.transform = 'scale(0.75)';
 		e.style.opacity = .7;
 		pickedId = e.id;
 		firstParent = e.parentElement;
 		e.style.position = 'absolute';
-		e.style.width = e.parentElement.parentElement.style.width;
-		e.style.height = e.parentElement.style.height;
+		e.style.width = width+'px';
+		e.style.height = height+'px';
 		e.style.transition = '';
 		e.style.top = my/h*100+'%';
 		e.style.left = mx/w*100+'%';
@@ -646,6 +623,7 @@
 			cell.appendChild(newItem);
 			if(cell.children.length > 0){
 				cell.children[0].remove();
+				cell.classList.remove(items.length-1);
 			}
 			cell.classList.add(newItem.id);
 			cell.appendChild(newItem);
